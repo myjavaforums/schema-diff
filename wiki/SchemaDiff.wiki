@@ -1,0 +1,15 @@
+An introduction to SchemaDiff
+
+= Introduction =
+
+I created SchemaDiff because I couldn't find a utility that did diffs of two different database schemas that was free or inexpensive.
+
+SchemaDiff quickly compares all of the tables, columns, and indexes in two databases and produces reports showing the differences.
+
+
+= Details =
+
+Add your content here.  Format your content with:
+  * Text in *bold* or _italic_
+  * Headings, paragraphs, and lists
+  * Automatic links to other wiki pages
