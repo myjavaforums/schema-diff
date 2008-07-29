@@ -1,3 +1,9 @@
+/**
+ * Copyright 2008 - Seth M. Fuller
+ * 
+ * License: Apache 2.0
+ *
+ */
 package org.schema_diff.database;
 
 import java.io.File;
@@ -8,18 +14,18 @@ import java.io.InputStream;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.Driver;
 import java.sql.PreparedStatement;
-import java.sql.Statement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLWarning;
+import java.sql.Statement;
 
-import java.util.Properties;
-import java.util.Iterator;
-import java.util.Set;
 import java.util.HashMap;
-
+import java.util.Iterator;
+import java.util.Properties;
+import java.util.Set;
 
 import org.schema_diff.AppSupport;
 
@@ -47,8 +53,7 @@ public class DatabaseConnection {
         return _dbConn;
     }
     
-    private DatabaseConnection(Properties config)
-    {
+    private DatabaseConnection(Properties config) {
         _config = config;
     }
     
@@ -93,18 +98,26 @@ public class DatabaseConnection {
         return _connection;
     }
     
-    public void exec(String sql)
-	throws SQLException
-    {
-        PreparedStatement ps = getConnection().prepareStatement(sql);
+    public DatabaseMetaData getDatabaseMetaData(String schemaName) 
+	throws SQLException {
+	DatabaseMetaData metaData = null;
+	metaData = getConnection(schemaName).getMetaData();
+
+	return metaData;
+    }
+
+    public void exec(String schemaName, String sql) throws SQLException {
+        PreparedStatement ps
+	    = getConnection(schemaName).prepareStatement(sql);
         ps.execute();
         close(ps,null);
     }
     
-    public CallableStatement prepareCall(String callStatement)
+    public CallableStatement prepareCall(String schemaName,
+					 String callStatement)
 	throws SQLException {
 	CallableStatement callStmt
-	    = getConnection().prepareCall(callStatement);
+	    = getConnection(schemaName).prepareCall(callStatement);
 
 	return callStmt;
 
@@ -120,11 +133,11 @@ public class DatabaseConnection {
 
     }
 
-    public long getId(String sql)
+    public long getId(String schemaName, String sql)
 	throws SQLException
     {
         long id = 0;
-        PreparedStatement ps = getConnection().prepareStatement(sql);
+        PreparedStatement ps = getConnection(schemaName).prepareStatement(sql);
         ResultSet rs = ps.executeQuery();
         if ( rs.next() )
 	    {
@@ -149,7 +162,7 @@ public class DatabaseConnection {
         long id = 0;
 	int rc = 0;
 	ResultSet rs = null;
-        Statement stmt = getConnection().createStatement();
+        Statement stmt = getConnection(schemaName).createStatement();
         rc = stmt.executeUpdate(sql);
 
         return rc;

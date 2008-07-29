@@ -1,3 +1,9 @@
+/**
+ * Copyright 2008 - Seth M. Fuller
+ * 
+ * License: Apache 2.0
+ *
+ */
 package org.schema_diff;
 /**
  * This class consists of static methods to support the application
