@@ -28,28 +28,38 @@ public class AppSupport {
 
     public static Properties getProperties() {
 	
-	try {
-	    InputStream inProp
-		= AppSupport.class.getClassLoader().getResourceAsStream(propFile);
-	    if (inProp == null) {
-		System.err.println("Properties file not found:"
-				   + propFile);
+	if (null == _config) {
+	    try {
+		InputStream inProp
+		    = AppSupport.class.getClassLoader().getResourceAsStream(propFile);
+		if (inProp == null) {
+		    System.err.println("Properties file not found:"
+				       + propFile);
+		    return null;
+		}
+
+		_config = new java.util.Properties();
+		if ( _config != null ) {
+		    _config.load(inProp);
+		}
+	    }
+	    catch (IOException exc) {
+		System.err.println("Can't read " + propFile);
+		exc.printStackTrace();
 		return null;
 	    }
-	    //  Properties config = getProperties(propFile);
-	    _config = new java.util.Properties();
-	    if ( _config != null ) {
-		_config.load(inProp);
-	    }
-	}
-	catch (IOException exc) {
-	    System.err.println("Can't read " + propFile);
-	    exc.printStackTrace();
-	    return null;
 	}
         return _config;
     }
-    
+
+    public static String getProperty(String propName) {
+	String propVal = null;
+
+	propVal = AppSupport.getProperties().getProperty(propName);
+
+	return propVal;
+    }
+
     public static void debugMessage(String dbgMsg) {
 	if (isDebug) {
 	    System.err.println(dbgMsg + " AT: " + DateUtilities.now());

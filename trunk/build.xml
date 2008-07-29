@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="SchemaDiff" default="compile" basedir=".">
+    
+  <condition property="propertyFileName" value="build.properties">
+    <not>
+      <isset property="propertyFileName" />
+    </not>
+  </condition>
+
+  <property file="${propertyFileName}" />
+
+    <target name="all" depends="clean,compile">
+    </target>
+    
+    <target name="init" depends="clean">
+        <mkdir dir="${bcp.dir}"/>
+    </target>
+    
+    <target name="clean">
+        <delete dir="${class.dir}"/>
+      <delete dir="${javadoc.dir}" quiet="true"/>
+    </target>
+    
+    <target name="compile">
+        <mkdir dir="${class.dir}"/>
+        <javac srcdir="${src.dir}"
+	       destdir="${class.dir}" debug="true"
+	       >
+            <classpath>
+                <pathelement path="${lib.dir}/jconn3.jar"/>
+            </classpath>
+        </javac>
+    </target>
+    
+   
+    <target name="run_diff" depends="compile, install-jar">
+        <java classname="org.schema_diff.main.SchemaDiffMain" 
+	      fork="true">
+	  <arg value="devfr56"/>
+	  <arg value="tmpnmhc"/>
+	  <jvmarg value="-Xms512m"/>
+	  <jvmarg value="-Xmx512m"/>
+            <classpath>
+                <pathelement
+		   path="${lib.dir}/${jar.name}_${jar.version}.jar"/>
+                <pathelement path="${lib.dir}/jconn3.jar"/>
+            </classpath>
+        </java>
+    </target>
+    
+    <target name="run_proc_diff" depends="compile, install-jar">
+        <java classname="org.schema_diff.main.SchemaDiffProceduresMain" 
+	      fork="true">
+	  <arg value="devfr56"/>
+	  <arg value="tmpnmhc"/>
+	  <jvmarg value="-Xms512m"/>
+	  <jvmarg value="-Xmx1024m"/>
+            <classpath>
+                <pathelement
+		   path="${lib.dir}/${jar.name}_${jar.version}.jar"/>
+                <pathelement path="${lib.dir}/jconn3.jar"/>
+            </classpath>
+        </java>
+    </target>
+    
+    <target name="jar" depends="compile">
+        <delete 
+	   file="${build.dir}/${jar.name}_${jar.version}.jar"/>
+        <jar 
+	   jarfile="${build.dir}/${jar.name}_${jar.version}.jar">
+            <fileset dir="${src.dir}" includes="**/*.java"/>
+            <fileset dir="${src.dir}" includes="**/*.xml"/>
+            <fileset dir="${src.dir}" includes="**/*.properties"/>
+            <fileset dir="${src.dir}" includes="**/*.sql"/>
+            <fileset dir="${class.dir}" includes="**/*.class"/>
+        </jar> 
+    </target>
+
+    <target name="install-jar" depends="jar">
+        <copy todir="${lib.dir}">
+            <fileset dir="${build.dir}" includes="**/*.jar" />
+        </copy>
+    </target>
+
+    <target name="javadoc" depends="init">
+      <mkdir dir="${javadoc.dir}"/>
+      <javadoc
+         packagenames="com"
+         sourcepath="${src.dir}"
+         defaultexcludes="yes"
+         destdir="${javadoc.dir}"
+         version="true"
+         use="true"
+         windowtitle="Schema Diff Utilities">
+      </javadoc>
+    </target>
+
+</project>
+
+
