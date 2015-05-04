@@ -1,0 +1,3 @@
+SchemaDiff is a utility that quickly does diffs of the table and index structures between two databases. I created this utility because I couldn't find a good inexpensive or free utility to diff the structure of a database.
+
+SchemaDiff is very fast and takes about 30-40 seconds to diff two Sybase databases. The diff encompasses all tables (actually the combination of table and owner), all columns (including data type, length, precision, scale, and existence), all indexes (columns and the order they appear in the index, clustered, and uniqueness).
